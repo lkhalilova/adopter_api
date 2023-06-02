@@ -1,0 +1,91 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8000:8000"
+    command: sh -c ./start.sh
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - broker_network
+      - nginx_network
+      - database_network
+
+  db:
+    image: postgres:14.4-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    networks:
+      - database_network
+
+  broker:
+    image: redis:6.0.4-alpine
+    networks:
+      - broker_network
+    volumes:
+      - broker_data:/data
+
+  celery:
+    build:
+      context: .
+    command: "celery -A library_core worker -l INFO"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - app
+      - db
+    networks:
+      - broker_network
+      - database_network
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "celery -A library_core beat -l INFO"
+    depends_on:
+      - app
+      - redis
+      - db
+      - celery
+    restart: on-failure
+    env_file:
+      - .env
+    networks:
+      - broker_network
+
+  nginx:
+    build: ./nginx
+    ports:
+      - "80:80"
+    networks:
+      - nginx_network
+    depends_on:
+      - app
+
+networks:
+  broker_network:
+    name: broker_network
+    driver: bridge
+  nginx_network:
+    name: nginx_network
+    driver: bridge
+  database_network:
+    name: database_network
+    driver: bridge
+
+volumes:
+  postgres_data:
+  broker_data:

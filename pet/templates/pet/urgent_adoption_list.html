@@ -1,0 +1,7 @@
+<h1>Тварини, що терміново потребують прихистку</h1>
+<ul>
+  {% for pet in pets %}
+  <li>{{ pet.name }} - {{ pet.species }} - {{ pet.gender }} - {{ pet.age }} year{{ pet.age|pluralize }} old</li>
+  <li>{{ pet.description }}</li>
+  {% endfor %}
+</ul>
