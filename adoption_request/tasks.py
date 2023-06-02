@@ -8,7 +8,7 @@ import requests
 def send_adoption_update_notification(adoption_request_id):
     """
     Sends telegram notification on every adoption request approve or
-    do_not_approve update
+    reject update
     """
     try:
         adoption_request = AdoptionRequest.objects.get(id=adoption_request_id)

@@ -10,8 +10,8 @@ class AdoptionRequest(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, null=True)
 
     def __str__(self):
-        return f"{self.adopter.first_name} {self.adopter.last_name} {self.adopter.city} - " \
-               f"{self.pet.name} {self.pet.species} {self.pet.city} - {self.approved}"
+        return f"{self.adopter.first_name} {self.adopter.last_name} - " \
+               f"{self.pet.name} {self.pet.species} {self.pet.city} "
 
     class Meta:
         ordering = ["approved"]

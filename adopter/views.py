@@ -21,7 +21,6 @@ class AdopterListView(ReadOnlyModelViewSet):
     search_fields = ["last_name", "city"]
     ordering_fields = ['city']
     filter_backends = [
-        django_filters.rest_framework.DjangoFilterBackend,
         SearchFilter, OrderingFilter
     ]
 
