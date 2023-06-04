@@ -21,7 +21,7 @@ class TemporalOwnerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ("id", 'first_name', 'last_name', 'city', 'is_admin', 'is_superuser', 'is_staff', 'username', 'password')
+        fields = ("id", 'first_name', 'last_name', 'city', 'username', 'password')
         read_only_fields = ("id", 'is_admin', 'is_superuser', "is_staff")
         write_only_fields = "password"
 

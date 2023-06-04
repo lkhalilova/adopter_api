@@ -44,7 +44,7 @@ class TemporalOwner(AbstractBaseUser):
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     username = models.CharField(max_length=50, unique=True)
-    password = models.CharField(max_length=50, null=True, blank=True)
+    password = models.CharField(max_length=250, null=True, blank=True)
 
     def __str__(self):
         return f"{self.first_name} - {self.last_name} , {self.city}"

@@ -115,7 +115,6 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'temporal_owner.TemporalOwner'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'temporal_owner.backends.TemporalOwnerBackend',
 ]
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -206,13 +205,11 @@ if DEBUG:
 
 # telegram
 
-TELEGRAM_BOT_TOKEN = "6197029614:AAGvc711w5bbnu4FDd77ZokDsUila8xyEus"
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
-TG_BASE_URL = "https://api.telegram.org/bot"
-# NGROK_URL = " "
-# TELEGRAM_WEBHOOK_URL = f"{NGROK_URL}/adopter/api/telegram/"
-# webhook_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setWebhook?url={TELEGRAM_WEBHOOK_URL}"
-# response = requests.get(webhook_url)
-# print(response.json())
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+NGROK_URL = " "
+TELEGRAM_WEBHOOK_URL = f"{NGROK_URL}/adopter/api/telegram/"
+webhook_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setWebhook?url={TELEGRAM_WEBHOOK_URL}"
+response = requests.get(webhook_url)
+print(response.json())
 
 
