@@ -12,9 +12,9 @@ class TemporalOwnerSerializer(serializers.ModelSerializer):
             MinLengthValidator(6),
             MaxLengthValidator(10),
             RegexValidator(
-                regex=r'^(?=.*\d)(?=.*[a-z]{2,})(?=.*[A-Z])[0-9a-zA-Z]{6,10}$',
+                regex=r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{6,10}$',
                 message="Password must contain at least one digit, "
-                        "two lowercase letters, one uppercase letter, and no other special characters."
+                        "one lowercase letter, one uppercase letter, and no other special characters."
             )
         ]
     )

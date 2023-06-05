@@ -17,9 +17,6 @@ from utils.permissions import IsCustomAdminUser
 from utils.filters import IsOwnerFilterBackend
 
 
-city_list = ['Дніпро', 'Харків', 'Київ']
-
-
 class CustomPaginator(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 10
@@ -63,15 +60,6 @@ class PetListView(ModelViewSet):
         if self.request.method == "GET":
             return PetReadSerializer
         return PetCreateSerializer
-
-    def add_city(self):
-        """
-        Dynamic city adding to the city_list
-        """
-        if self.request.method == "POST":
-            city_name = self.request.get("city")
-            if city_name not in city_list:
-                city_list.append(str(city_name))
 
     @action(detail=False, methods=["GET"])
     def urgent_adoption_pets_list(self, request, *args, **kwargs):
@@ -132,7 +120,7 @@ class CitySelectView(View):
     this view helps users to search for a pet depends on a city they choose
     """
     def get(self, request):
-        cities = city_list  # cities list
+        cities = Pet.objects.values_list('city', flat=True).distinct()
         return render(request, 'pet/city_select.html', {'cities': cities})
 
     def post(self, request):
