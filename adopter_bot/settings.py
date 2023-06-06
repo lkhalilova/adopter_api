@@ -13,6 +13,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
+from .webhook_setup import setup_telegram_webhook
 
 load_dotenv()
 
@@ -206,10 +207,5 @@ if DEBUG:
 # telegram
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-NGROK_URL = " "
-TELEGRAM_WEBHOOK_URL = f"{NGROK_URL}/adopter/api/telegram/"
-webhook_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setWebhook?url={TELEGRAM_WEBHOOK_URL}"
-response = requests.get(webhook_url)
-print(response.json())
-
+TG_BASE_URL = setup_telegram_webhook(TELEGRAM_BOT_TOKEN)
 

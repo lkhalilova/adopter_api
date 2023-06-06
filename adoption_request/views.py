@@ -17,6 +17,18 @@ from typing import List
 from rest_framework.filters import SearchFilter, OrderingFilter
 
 
+class AdoptionRequestFilter(django_filters.FilterSet):
+    created_at_year = django_filters.NumberFilter(field_name='created_at', lookup_expr='year')
+
+    class Meta:
+        model = AdoptionRequest
+        fields = {
+            'approved': ['exact'],
+            'pet__species': ['icontains'],
+            'pet__age': ['lte', 'gte'],
+        }
+
+
 class CustomPaginator(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 10
@@ -25,11 +37,10 @@ class CustomPaginator(PageNumberPagination):
 class AdoptionRequestListView(ModelViewSet):
     queryset = AdoptionRequest.objects.all()
     pagination_class = CustomPaginator
+    filterset_class = AdoptionRequestFilter
     search_fields = ["requested_pet.id", "=adopter.chat_id", "=adopter.last_name"]
     ordering_fields = ['approved']
-    filter_backends = [
-        SearchFilter, OrderingFilter
-    ]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend, SearchFilter, OrderingFilter]
 
     def get_permissions(self) -> List[BasePermission]:
         if self.action == "create":
@@ -37,29 +48,6 @@ class AdoptionRequestListView(ModelViewSet):
         else:
             permission_classes = [IsAuthenticated, IsCustomAdminUser]
         return [permission() for permission in permission_classes]
-
-    def get_queryset(self):
-        queryset = AdoptionRequest.objects.all()
-
-        approved = self.request.query_params.get('approved', None)
-        if approved is not None:
-            queryset = queryset.filter(approved=approved)
-
-        species = self.request.query_params.get('species', None)
-        if species is not None:
-            queryset = queryset.filter(pet__species__icontains=species)
-
-        min_age = self.request.query_params.get('min_age', None)
-        max_age = self.request.query_params.get('max_age', None)
-
-        if min_age is not None and max_age is not None:
-            queryset = queryset.filter(pet__age__gte=min_age, pet__age__lte=max_age)
-
-        date = self.request.query_params.get('year', None)
-        if date is not None:
-            queryset = queryset.filter(date__year=date)
-
-        return queryset
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -136,7 +124,3 @@ class AdoptionRequestApproveView(ModelViewSet):
         send_adoption_update_notification.delay(serializer.instance.id)
 
         return Response(serializer.data)
-
-
-
-
