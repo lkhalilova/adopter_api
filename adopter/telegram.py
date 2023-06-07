@@ -54,41 +54,38 @@ class TelegramWebhookCallbackController:
         callback_query = request.data.get('callback_query', {})
         callback_data = callback_query.get('data', '')
 
-        response_message = ""
+        if "create_request" not in callback_data:
+            response_message = "Invalid command"
+            return Response({"message": response_message})
 
-        match callback_data:
-            case "create_request_{pet.id}":
-                try:
-                    pet_id = int(callback_data.split('_')[2])
-                    pet = Pet.objects.get(id=pet_id)
-                except (IndexError, ValueError, Pet.DoesNotExist):
-                    return Response({"error": "Invalid callback data"}, status=status.HTTP_400_BAD_REQUEST)
+        pet_id = callback_data.split('_')[-1]
+        try:
+            pet = Pet.objects.get(id=pet_id)
+        except (Pet.DoesNotExist):
+            return Response({"error": "Invalid callback data"}, status=status.HTTP_400_BAD_REQUEST)
 
-                first_name = callback_query.get("from").get("first_name")
-                last_name = callback_query.get("from").get("last_name")
-                chat_id = callback_query.get("from").get("id")
+        first_name = callback_query.get("from").get("first_name")
+        last_name = callback_query.get("from").get("last_name")
+        chat_id = callback_query.get("from").get("id")
 
-                adopter_data = {
-                    "first_name": first_name,
-                    "last_name": last_name,
-                    "chat_id": chat_id
-                }
+        adopter_data = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "chat_id": chat_id
+        }
 
-                adoption_request_data = {
-                    "pet": pet,
-                    "adopter": adopter_data
-                }
+        adoption_request_data = {
+            "pet": pet,
+            "adopter": adopter_data
+        }
 
-                serializer = AdoptionRequestCreateSerializer(data=adoption_request_data)
+        serializer = AdoptionRequestCreateSerializer(data=adoption_request_data)
 
-                if serializer.is_valid():
-                    serializer.save()
-                    response_message = "Adoption Request was created successfully!"
-                else:
-                    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            case _:
-                response_message = "Invalid command"
-                return Response({"message": response_message})
+        if serializer.is_valid():
+            serializer.save()
+            response_message = "Adoption Request was created successfully!"
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         text_id_data = {
             "chat_id": chat_id,
