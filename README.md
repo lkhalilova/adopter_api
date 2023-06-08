@@ -1,5 +1,5 @@
 # adopter_api
-# API service aimed at helping automate the pet adoption process
+## API service aimed at helping automate the pet adoption process
 
 - JWT authentication
 - Supports different user types, with different level of permissions including a customized is_admin user and
