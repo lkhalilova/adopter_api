@@ -8,3 +8,4 @@ def setup_telegram_webhook(telegram_bot_token):
     webhook_url = f"https://api.telegram.org/bot{telegram_bot_token}/setWebhook?url={telegram_webhook_url}"
     response = requests.get(webhook_url)
     print(response.json())
+    return telegram_webhook_url

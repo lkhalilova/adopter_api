@@ -1,11 +1,11 @@
 from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from rest_framework import status
 import requests
 from adopter_bot.settings import TG_BASE_URL, TELEGRAM_BOT_TOKEN
 from adoption_request.serializers import AdoptionRequestCreateSerializer
 from pet.models import Pet
 from .models import AnonymousUser
+from django.http import JsonResponse
 
 
 class TelegramWebhookMessageController:
@@ -17,24 +17,22 @@ class TelegramWebhookMessageController:
         message = request.data.get('message', {})
         text = message.get('text', '')
 
-        response_message = ""
-
         match text:
             case '/start':
                 chat_id = message.get('chat', {}).get('id')
 
                 try:
-                    anonymous_user = AnonymousUser.objects.get(chat_id=chat_id)
+                    AnonymousUser.objects.get(chat_id=chat_id)
                 except AnonymousUser.DoesNotExist:
                     # Create a new AnonymousUser if it doesn't exist
-                    anonymous_user = AnonymousUser.objects.create(chat_id=chat_id)
+                    AnonymousUser.objects.create(chat_id=chat_id)
 
                 response_message = "Вітаю! Тепер ви будете отримувати повідомлення та " \
                                    "пропозиції щодо тварин, які потребують прихистку!"
 
             case _:
                 response_message = "Invalid command"
-                return Response({"message": response_message})
+                return JsonResponse({"message": response_message})
 
         text_id_data = {
             "chat_id": chat_id,
@@ -42,7 +40,7 @@ class TelegramWebhookMessageController:
         }
         requests.post(f"{TG_BASE_URL}{TELEGRAM_BOT_TOKEN}/sendMessage", json=text_id_data)
 
-        return Response({"message": response_message})
+        return JsonResponse({"message": response_message})
 
 
 class TelegramWebhookCallbackController:
@@ -56,13 +54,13 @@ class TelegramWebhookCallbackController:
 
         if "create_request" not in callback_data:
             response_message = "Invalid command"
-            return Response({"message": response_message})
+            return JsonResponse({"message": response_message})
 
         pet_id = callback_data.split('_')[-1]
         try:
             pet = Pet.objects.get(id=pet_id)
-        except (Pet.DoesNotExist):
-            return Response({"error": "Invalid callback data"}, status=status.HTTP_400_BAD_REQUEST)
+        except Pet.DoesNotExist:
+            return JsonResponse({"error": "Invalid callback data"}, status=status.HTTP_400_BAD_REQUEST)
 
         first_name = callback_query.get("from").get("first_name")
         last_name = callback_query.get("from").get("last_name")
@@ -85,7 +83,7 @@ class TelegramWebhookCallbackController:
             serializer.save()
             response_message = "Adoption Request was created successfully!"
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         text_id_data = {
             "chat_id": chat_id,
@@ -93,16 +91,16 @@ class TelegramWebhookCallbackController:
         }
         requests.post(f"{TG_BASE_URL}{TELEGRAM_BOT_TOKEN}/sendMessage", json=text_id_data)
 
-        return Response({"message": response_message})
+        return JsonResponse({"message": response_message})
 
 
 @api_view(['POST'])
 def telegram_webhook(request):
-    if message := request.json.get("message"):
+    if request.data.get("message"):
         handler = TelegramWebhookMessageController()
-    elif callback := request.json.get("callback_query"):
+    elif request.data.get("callback_query"):
         handler = TelegramWebhookCallbackController()
     else:
-        return Response({"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
+        return JsonResponse({"message": "Invalid request"}, status=status.HTTP_400_BAD_REQUEST)
     response = handler.handle_webhook(request)
-    return Response({"message": response})
+    return JsonResponse({"message": response})

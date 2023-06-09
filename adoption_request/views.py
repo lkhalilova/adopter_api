@@ -15,6 +15,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny, B
 from utils.permissions import IsCustomAdminUser
 from typing import List
 from rest_framework.filters import SearchFilter, OrderingFilter
+import django_filters
 
 
 class AdoptionRequestFilter(django_filters.FilterSet):

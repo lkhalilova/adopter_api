@@ -17,8 +17,6 @@ from .webhook_setup import setup_telegram_webhook
 
 load_dotenv()
 
-import requests
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,7 +29,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'c5ad-95-251-43-142.ngrok-free.app']
+NGROK_URL = os.getenv("NGROK_URL")
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', NGROK_URL]
 
 
 # Application definition
