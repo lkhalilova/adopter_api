@@ -47,6 +47,7 @@ anonymous telegram user
 - [GET] /pet/city/{str:city} (get a list of all pets filtered by requested city)
 
 ### ADOPTION_REQUEST:
+
 - [POST] /adoption_request/ (create adoption request with related adopter object)
 - [GET] /adoption_request/ (list if all adoption requests)
 - [GET] /adoption_request/{id} (detail about adoption request)
