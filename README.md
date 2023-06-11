@@ -46,8 +46,7 @@ anonymous telegram user
 - [GET] /pet/city/ (get a list of all pets filtered by a chosen city)
 - [GET] /pet/city/{str:city} (get a list of all pets filtered by requested city)
 
-### ADOPTION_REQUEST:
-
+ADOPTION_REQUEST:
 - [POST] /adoption_request/ (create adoption request with related adopter object)
 - [GET] /adoption_request/ (list if all adoption requests)
 - [GET] /adoption_request/{id} (detail about adoption request)
@@ -55,7 +54,10 @@ anonymous telegram user
 - [PATCH] /adoption_request/{id} (partial update of adoption request)
 - [DELETE] /adoption_request/{id} (delete adoption request)
 - [GET] /adoption_request/get_statistics (get adoption statistics)
-- PUT] /adoption_request/approve/{id} (approve adoption request)
+- [PUT] /adoption_request/approve/{id} (approve adoption request)
+
+
+
 
 
 
