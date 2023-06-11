@@ -1,0 +1,10 @@
+<form method="post">
+  {% csrf_token %}
+  <label for="city">Оберіть своє місто:</label>
+  <select name="city" id="city">
+    {% for city in cities %}
+    <option value="{{ city }}">{{ city }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">Показати тваринок</button>
+</form>
