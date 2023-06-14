@@ -1,3 +1,19 @@
+
+
+
+
+
+
+
+![c2](https://github.com/lkhalilova/adopter_api/assets/121033230/5051516e-5c90-4ad8-acfd-f832818f13cc)
+
+
+
+
+
+
+
+
 ## API service aimed at helping automate the pet adoption process
 
 - JWT authentication
